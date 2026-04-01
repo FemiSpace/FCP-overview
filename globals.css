@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:    #0D1B2A;
+  --navy2:   #1F3A5C;
+  --navy3:   #2E5B8E;
+  --teal:    #0F6E56;
+  --teal2:   #1D9E75;
+  --amber:   #BA7517;
+  --amber2:  #EF9F27;
+  --green:   #3B6D11;
+  --green2:  #639922;
+  --red:     #A32D2D;
+  --purple:  #534AB7;
+  --gray:    #5F5E5A;
+  --ink:     #1A1A1A;
+  --muted:   #666660;
+  --subtle:  #999990;
+  --border:  #E5E5E0;
+  --surface: #F8F8F5;
+  --white:   #FFFFFF;
+  --font:    'DM Sans', sans-serif;
+  --mono:    'DM Mono', monospace;
+}
+
+html { font-size: 16px; }
+body { font-family: var(--font); color: var(--ink); background: var(--white); -webkit-font-smoothing: antialiased; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
