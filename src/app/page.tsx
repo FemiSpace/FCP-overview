@@ -84,6 +84,7 @@ function CostsView({scenario}: {scenario: 'bear'|'base'|'bull'}) {
                     <div style={{background:'#F8F8F5',borderRadius:6,padding:'8px 10px'}}>
                       <div style={{fontSize:10,fontWeight:600,color:'#888',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.05em'}}>Benchmark</div>
                       <div style={{fontSize:11,color:'#444',lineHeight:1.5}}>{item.benchmark}</div>
+                      {'benchmarkUrl' in item && item.benchmarkUrl && <a href={item.benchmarkUrl as string} target='_blank' rel='noopener noreferrer' style={{fontSize:10,color:'#185FA5',marginTop:4,display:'inline-block'}}>↗ view source</a>}
                     </div>
                     <div style={{background:'#FFF8E7',borderRadius:6,padding:'8px 10px',border:'0.5px solid #EF9F27'}}>
                       <div style={{fontSize:10,fontWeight:600,color:'#854F0B',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.05em'}}>Watch item</div>
@@ -124,6 +125,7 @@ function CostsView({scenario}: {scenario: 'bear'|'base'|'bull'}) {
                 <div style={{background:'#F8F8F5',borderRadius:6,padding:'8px 10px'}}>
                   <div style={{fontSize:10,fontWeight:600,color:'#888',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.05em'}}>Benchmark</div>
                   <div style={{fontSize:11,color:'#444',lineHeight:1.5}}>{item.benchmark}</div>
+                  {(item as any).benchmarkUrl && <a href={(item as any).benchmarkUrl} target='_blank' rel='noopener noreferrer' style={{fontSize:10,color:'#185FA5',marginTop:4,display:'inline-block'}}>↗ view source</a>}
                 </div>
                 <div style={{background:'#FFF8E7',borderRadius:6,padding:'8px 10px',border:'0.5px solid #EF9F27'}}>
                   <div style={{fontSize:10,fontWeight:600,color:'#854F0B',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.05em'}}>Watch item</div>
@@ -161,6 +163,7 @@ function CostsView({scenario}: {scenario: 'bear'|'base'|'bull'}) {
                 <div style={{background:'#F8F8F5',borderRadius:6,padding:'8px 10px'}}>
                   <div style={{fontSize:10,fontWeight:600,color:'#888',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.05em'}}>Benchmark</div>
                   <div style={{fontSize:11,color:'#444',lineHeight:1.5}}>{item.benchmark}</div>
+                  {(item as any).benchmarkUrl && <a href={(item as any).benchmarkUrl} target='_blank' rel='noopener noreferrer' style={{fontSize:10,color:'#185FA5',marginTop:4,display:'inline-block'}}>↗ view source</a>}
                 </div>
                 <div style={{background:'#FFF8E7',borderRadius:6,padding:'8px 10px',border:'0.5px solid #EF9F27'}}>
                   <div style={{fontSize:10,fontWeight:600,color:'#854F0B',marginBottom:4,textTransform:'uppercase',letterSpacing:'0.05em'}}>Watch item</div>
@@ -346,20 +349,7 @@ export default function Page() {
             <text x="610" y="450" style={{fontSize:9,fill:'#888',fontStyle:'italic',fontFamily:'DM Sans,sans-serif'}}>Click any box to explore</text>
           </svg>
 
-          {/* Quick summary cards */}
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,maxWidth:900,margin:'20px auto 0'}}>
-            {[
-              {label:'P1 gross revenue (2032 base)',value:'TBD',color:'#0F6E56',bg:'#EAF3DE'},
-              {label:'P1 net income (2032 base)',value:'TBD',color:'#0F6E56',bg:'#EAF3DE'},
-              {label:'TopCo dividend income (10%)',value:'TBD',color:'#185FA5',bg:'#E6F1FB'},
-              {label:'Total equity proceeds (P1+P2)',value:'TBD',color:'#534AB7',bg:'#EEEDFE'},
-            ].map((c,i)=>(
-              <div key={i} style={{background:c.bg,borderRadius:10,padding:'14px',textAlign:'center'}}>
-                <div style={{fontSize:10,color:c.color,fontWeight:600,marginBottom:6,textTransform:'uppercase',letterSpacing:'0.05em'}}>{c.label}</div>
-                <div style={{fontSize:22,fontWeight:700,color:c.color}}>{c.value}</div>
-              </div>
-            ))}
-          </div>
+
         </div>
       )}
 
@@ -461,7 +451,10 @@ export default function Page() {
                         <td style={{padding:'7px 8px',textAlign:'right',color:'#A32D2D',fontWeight: scenario==='bear'?700:400, background: scenario==='bear'?'#FFF5F5':'transparent'}}>{fmt(inp.bear)}</td>
                         <td style={{padding:'7px 8px',textAlign:'right',color:'#185FA5',fontWeight: scenario==='base'?700:400, background:'#F4F9FE'}}>{fmt(inp.base)}</td>
                         <td style={{padding:'7px 8px',textAlign:'right',color:'#3B6D11',fontWeight: scenario==='bull'?700:400, background: scenario==='bull'?'#F4FBF0':'transparent'}}>{fmt(inp.bull)}</td>
-                        <td style={{padding:'7px 10px',color:'#888',fontSize:11,fontStyle:'italic'}}>{inp.note}</td>
+                        <td style={{padding:'7px 10px',color:'#888',fontSize:11,fontStyle:'italic'}}>
+                          {inp.note}
+                          {inp.sourceUrl && <><br/><a href={inp.sourceUrl} target="_blank" rel="noopener noreferrer" style={{color:'#185FA5',fontSize:10}}>↗ source</a></>}
+                        </td>
                       </tr>
                     )
                   })}
@@ -507,7 +500,7 @@ export default function Page() {
                     <tr key={i} style={{borderBottom:'0.5px solid #F0F0EA'}}>
                       <td style={{padding:'7px 10px',fontWeight:600,width:'22%',color:'#444'}}>{a.param}</td>
                       <td style={{padding:'7px 10px',color: a.param.includes('CRITICAL')||a.param.includes('FLAG')||a.param.includes('STATUS')?'#A32D2D':'#333', fontWeight: a.param.includes('CRITICAL')||a.param.includes('STATUS')?600:400}}>{a.value}</td>
-                      <td style={{padding:'7px 10px',color:'#888',fontSize:11,fontStyle:'italic'}}>{a.source}</td>
+                      <td style={{padding:'7px 10px',color:'#888',fontSize:11,fontStyle:'italic'}}>{(a as any).url ? <a href={(a as any).url} target='_blank' rel='noopener noreferrer' style={{color:'#185FA5',textDecoration:'underline'}}>{a.source}</a> : a.source}</td>
                     </tr>
                   ))}
                 </tbody>
