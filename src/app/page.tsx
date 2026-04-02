@@ -1,8 +1,9 @@
 'use client'
 import { useState } from 'react'
-import { STREAMS, CAPEX_ITEMS, PROJECT_OPEX, TOPCO_OPEX, EQUITY_ROUNDS, Stream } from './data'
+import { STREAMS, CAPEX_ITEMS, PROJECT_OPEX, TOPCO_OPEX, EQUITY_ROUNDS } from './data'
+import type { Stream } from './data'
 
-type View = 'streams'|'costs'|'equity'|'notes'
+type View = 'schema'|'streams'|'costs'|'equity'|'notes'
 type Scenario = 'bear'|'base'|'bull'
 
 const STATUS_META: Record<string,{label:string;bg:string;color:string}> = {
@@ -18,6 +19,12 @@ const TYPE_BADGE: Record<string,{bg:string;color:string}> = {
   'MILESTONE': {bg:'#E0F7FA',  color:'#085041'},
   'PCT_OF':    {bg:'#F3E5F5',  color:'#4A148C'},
   'CAGR':      {bg:'#E8F5E9',  color:'#1B5E20'},
+}
+
+function getScenarioVal(item: {bear:number;base:number;bull:number}, s: 'bear'|'base'|'bull'): number {
+  if (s === 'bear') return item.bear
+  if (s === 'bull') return item.bull
+  return item.base
 }
 
 function CostsView({scenario}: {scenario: 'bear'|'base'|'bull'}) {
@@ -68,7 +75,7 @@ function CostsView({scenario}: {scenario: 'bear'|'base'|'bull'}) {
                       {(['bear','base','bull'] as const).map(s=>(
                         <div key={s} style={{textAlign:'center',minWidth:56}}>
                           <div style={{fontSize:9,color:'#888',marginBottom:2,textTransform:'uppercase'}}>{s}</div>
-                          <div style={{fontSize:14,fontWeight:700,color:s==='bear'?'#A32D2D':s==='bull'?'#3B6D11':'#185FA5',background:scenario===s?(s==='bear'?'#FFF0F0':s==='bull'?'#F0FBF0':'#EBF3FB'):'transparent',borderRadius:6,padding:'4px 8px'}}>{item[s]===0?'TBD':item[s].toLocaleString()}</div>
+                          <div style={{fontSize:14,fontWeight:700,color:s==='bear'?'#A32D2D':s==='bull'?'#3B6D11':'#185FA5',background:scenario===s?(s==='bear'?'#FFF0F0':s==='bull'?'#F0FBF0':'#EBF3FB'):'transparent',borderRadius:6,padding:'4px 8px'}}>{getScenarioVal(item,s)===0?'TBD':getScenarioVal(item,s).toLocaleString()}</div>
                         </div>
                       ))}
                     </div>
@@ -108,7 +115,7 @@ function CostsView({scenario}: {scenario: 'bear'|'base'|'bull'}) {
                   {(['bear','base','bull'] as const).map(s=>(
                     <div key={s} style={{textAlign:'center',minWidth:72}}>
                       <div style={{fontSize:9,color:'#888',marginBottom:2,textTransform:'uppercase'}}>{s}</div>
-                      <div style={{fontSize:13,fontWeight:700,color:s==='bear'?'#A32D2D':s==='bull'?'#3B6D11':'#185FA5',background:scenario===s?(s==='bear'?'#FFF0F0':s==='bull'?'#F0FBF0':'#EBF3FB'):'transparent',borderRadius:6,padding:'4px 8px'}}>{item[s]===0?'TBD':item[s].toLocaleString()}</div>
+                      <div style={{fontSize:13,fontWeight:700,color:s==='bear'?'#A32D2D':s==='bull'?'#3B6D11':'#185FA5',background:scenario===s?(s==='bear'?'#FFF0F0':s==='bull'?'#F0FBF0':'#EBF3FB'):'transparent',borderRadius:6,padding:'4px 8px'}}>{getScenarioVal(item,s)===0?'TBD':getScenarioVal(item,s).toLocaleString()}</div>
                     </div>
                   ))}
                 </div>
@@ -145,7 +152,7 @@ function CostsView({scenario}: {scenario: 'bear'|'base'|'bull'}) {
                   {(['bear','base','bull'] as const).map(s=>(
                     <div key={s} style={{textAlign:'center',minWidth:60}}>
                       <div style={{fontSize:9,color:'#888',marginBottom:2,textTransform:'uppercase'}}>{s}</div>
-                      <div style={{fontSize:13,fontWeight:700,color:s==='bear'?'#A32D2D':s==='bull'?'#3B6D11':'#185FA5',background:scenario===s?(s==='bear'?'#FFF0F0':s==='bull'?'#F0FBF0':'#EBF3FB'):'transparent',borderRadius:6,padding:'4px 8px'}}>{item[s]===0?'TBD':item[s].toLocaleString()}</div>
+                      <div style={{fontSize:13,fontWeight:700,color:s==='bear'?'#A32D2D':s==='bull'?'#3B6D11':'#185FA5',background:scenario===s?(s==='bear'?'#FFF0F0':s==='bull'?'#F0FBF0':'#EBF3FB'):'transparent',borderRadius:6,padding:'4px 8px'}}>{getScenarioVal(item,s)===0?'TBD':getScenarioVal(item,s).toLocaleString()}</div>
                     </div>
                   ))}
                 </div>
@@ -170,7 +177,7 @@ function CostsView({scenario}: {scenario: 'bear'|'base'|'bull'}) {
 
 
 export default function Page() {
-  const [view, setView]         = useState<View>('streams')
+  const [view, setView]         = useState<View>('schema')
   const [scenario, setScenario] = useState<Scenario>('base')
   const [activeStream, setActiveStream] = useState<Stream>(STREAMS[0])
 
@@ -203,7 +210,7 @@ export default function Page() {
 
       {/* NAV */}
       <div style={{background:'#fff',borderBottom:'0.5px solid #E5E5E0',padding:'0 24px',display:'flex',gap:0}}>
-        {([['streams','Revenue streams'],['costs','Costs'],['equity','Equity waterfall'],['notes','Key gaps']] as [View,string][]).map(([v,label]) => (
+        {([['schema','System diagram'],['streams','Revenue streams'],['costs','Costs'],['equity','Equity waterfall'],['notes','Key gaps']] as [View,string][]).map(([v,label]) => (
           <button key={v} onClick={()=>setView(v)} style={{
             padding:'12px 18px',fontSize:13,border:'none',cursor:'pointer',background:'transparent',
             borderBottom: view===v ? '2px solid #0D1B2A' : '2px solid transparent',
@@ -212,6 +219,149 @@ export default function Page() {
           }}>{label}</button>
         ))}
       </div>
+
+
+      {/* SYSTEM DIAGRAM VIEW */}
+      {view==='schema' && (
+        <div style={{padding:'24px',maxWidth:1200,margin:'0 auto'}}>
+          <p style={{fontSize:13,color:'#888',marginBottom:16,textAlign:'center'}}>Click any component to jump to its revenue stream or cost detail</p>
+          <svg viewBox="0 0 780 520" style={{display:'block',width:'100%',maxWidth:900,margin:'0 auto'}}>
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </marker>
+            </defs>
+
+            <rect x="10" y="10" width="760" height="500" rx="12" fill="none" stroke="#E5E5E0" strokeWidth="0.5" strokeDasharray="5 3"/>
+            <rect x="218" y="28" width="344" height="464" rx="10" fill="none" stroke="#E5E5E0" strokeWidth="0.5" strokeDasharray="4 3"/>
+            <text x="390" y="41" textAnchor="middle" style={{fontSize:10,fill:'#999',fontFamily:'DM Sans,sans-serif'}}>Shared reservoir system</text>
+
+            {/* Solar */}
+            <g style={{cursor:'pointer'}} onClick={()=>{setView('streams');setActiveStream(STREAMS[0])}}>
+              <rect x="24" y="38" width="160" height="50" rx="8" fill="#FAEEDA" stroke="#854F0B" strokeWidth="0.5"/>
+              <text x="104" y="59" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#633806',fontFamily:'DM Sans,sans-serif'}}>Solar farm</text>
+              <text x="104" y="76" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#854F0B',fontFamily:'DM Sans,sans-serif'}}>600 MWp · West Texas</text>
+            </g>
+
+            {/* Produced water */}
+            <g style={{cursor:'pointer'}} onClick={()=>{setView('streams');setActiveStream(STREAMS[4])}}>
+              <rect x="24" y="210" width="160" height="50" rx="8" fill="#E1F5EE" stroke="#0F6E56" strokeWidth="0.5"/>
+              <text x="104" y="231" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#085041',fontFamily:'DM Sans,sans-serif'}}>Produced water</text>
+              <text x="104" y="247" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#0F6E56',fontFamily:'DM Sans,sans-serif'}}>Permian Basin · tipping fee</text>
+            </g>
+
+            {/* Upper reservoir */}
+            <rect x="236" y="48" width="308" height="50" rx="8" fill="#E6F1FB" stroke="#185FA5" strokeWidth="0.5"/>
+            <text x="390" y="68" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#0C447C',fontFamily:'DM Sans,sans-serif'}}>Upper reservoir</text>
+            <text x="390" y="84" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#185FA5',fontFamily:'DM Sans,sans-serif'}}>Water at height = stored energy · 1.75 Mm³</text>
+
+            {/* Flow arrows */}
+            <line x1="375" y1="98" x2="375" y2="128" stroke="#185FA5" strokeWidth="1.5" markerEnd="url(#ar)"/>
+            <line x1="405" y1="128" x2="405" y2="98" stroke="#185FA5" strokeWidth="1.5" markerEnd="url(#ar)"/>
+            <text x="418" y="114" style={{fontSize:9,fill:'#185FA5',fontFamily:'DM Sans,sans-serif'}}>water up/down</text>
+
+            {/* Pump turbines */}
+            <rect x="236" y="132" width="308" height="50" rx="8" fill="#F1EFE8" stroke="#5F5E5A" strokeWidth="0.5"/>
+            <text x="390" y="152" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#444441',fontFamily:'DM Sans,sans-serif'}}>Pump-turbine units</text>
+            <text x="390" y="168" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#5F5E5A',fontFamily:'DM Sans,sans-serif'}}>Oilfield-grade PRTs · reversible · 80% RT eff.</text>
+
+            <line x1="375" y1="182" x2="375" y2="212" stroke="#185FA5" strokeWidth="1.5" markerEnd="url(#ar)"/>
+            <line x1="405" y1="212" x2="405" y2="182" stroke="#185FA5" strokeWidth="1.5" markerEnd="url(#ar)"/>
+
+            {/* Lower reservoir */}
+            <rect x="236" y="216" width="308" height="50" rx="8" fill="#E6F1FB" stroke="#185FA5" strokeWidth="0.5"/>
+            <text x="390" y="236" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#0C447C',fontFamily:'DM Sans,sans-serif'}}>Lower reservoir</text>
+            <text x="390" y="252" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#185FA5',fontFamily:'DM Sans,sans-serif'}}>700 m underground · 3 GWH Phase 1 · TBM excavated</text>
+
+            {/* DTAI */}
+            <line x1="390" y1="358" x2="390" y2="268" stroke="#534AB7" strokeWidth="1" strokeDasharray="4 3" markerEnd="url(#ar)"/>
+            <g style={{cursor:'pointer'}} onClick={()=>setView('costs')}>
+              <rect x="268" y="362" width="244" height="50" rx="8" fill="#EEEDFE" stroke="#534AB7" strokeWidth="0.5"/>
+              <text x="390" y="382" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#3C3489',fontFamily:'DM Sans,sans-serif'}}>DTAI platform</text>
+              <text x="390" y="398" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#534AB7',fontFamily:'DM Sans,sans-serif'}}>AI dispatch · 5 physical controls · IP asset</text>
+            </g>
+
+            {/* Rock aggregate */}
+            <line x1="390" y1="450" x2="390" y2="414" stroke="#854F0B" strokeWidth="1" strokeDasharray="3 3" markerEnd="url(#ar)"/>
+            <g style={{cursor:'pointer'}} onClick={()=>{setView('streams');setActiveStream(STREAMS[5])}}>
+              <rect x="268" y="454" width="244" height="46" rx="8" fill="#FAEEDA" stroke="#854F0B" strokeWidth="0.5"/>
+              <text x="390" y="472" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#633806',fontFamily:'DM Sans,sans-serif'}}>Rock aggregate</text>
+              <text x="390" y="488" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#854F0B',fontFamily:'DM Sans,sans-serif'}}>TBM byproduct · 13.5M tonnes · $0 marginal cost</text>
+            </g>
+
+            {/* Grid turbines */}
+            <g style={{cursor:'pointer'}} onClick={()=>{setView('streams');setActiveStream(STREAMS[2])}}>
+              <rect x="24" y="310" width="160" height="50" rx="8" fill="#EEEDFE" stroke="#534AB7" strokeWidth="0.5"/>
+              <text x="104" y="330" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#3C3489',fontFamily:'DM Sans,sans-serif'}}>Grid turbines</text>
+              <text x="104" y="346" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#534AB7',fontFamily:'DM Sans,sans-serif'}}>2×300 MW · arb + AS + black start</text>
+            </g>
+            <path d="M184 333 L234 152" fill="none" stroke="#534AB7" strokeWidth="1.5" strokeDasharray="4 3" markerEnd="url(#ar)"/>
+
+            {/* ERCOT */}
+            <g style={{cursor:'pointer'}} onClick={()=>{setView('streams');setActiveStream(STREAMS[2])}}>
+              <rect x="24" y="416" width="160" height="50" rx="8" fill="#E1F5EE" stroke="#0F6E56" strokeWidth="0.5"/>
+              <text x="104" y="436" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#085041',fontFamily:'DM Sans,sans-serif'}}>ERCOT grid</text>
+              <text x="104" y="452" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#0F6E56',fontFamily:'DM Sans,sans-serif'}}>345 kV · pays for services</text>
+            </g>
+            <line x1="104" y1="416" x2="104" y2="362" stroke="#0F6E56" strokeWidth="1.5" markerEnd="url(#ar)"/>
+
+            {/* DC turbine */}
+            <g style={{cursor:'pointer'}} onClick={()=>{setView('streams');setActiveStream(STREAMS[1])}}>
+              <rect x="596" y="112" width="166" height="50" rx="8" fill="#EAF3DE" stroke="#3B6D11" strokeWidth="0.5"/>
+              <text x="679" y="132" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#27500A',fontFamily:'DM Sans,sans-serif'}}>DC turbine</text>
+              <text x="679" y="148" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#3B6D11',fontFamily:'DM Sans,sans-serif'}}>130 MW · isolated · $95/MWh PPA</text>
+            </g>
+            <path d="M594 162 L546 162 L546 240 L546 240" fill="none" stroke="#9A9A90" strokeWidth="1" strokeDasharray="3 3" markerEnd="url(#ar)"/>
+            <text x="550" y="207" style={{fontSize:9,fill:'#9A9A90',fontFamily:'DM Sans,sans-serif'}}>shared water</text>
+
+            {/* Data center */}
+            <g style={{cursor:'pointer'}} onClick={()=>{setView('streams');setActiveStream(STREAMS[1])}}>
+              <rect x="596" y="226" width="166" height="50" rx="8" fill="#EAF3DE" stroke="#3B6D11" strokeWidth="0.5"/>
+              <text x="679" y="246" textAnchor="middle" dominantBaseline="central" style={{fontSize:12,fontWeight:600,fill:'#27500A',fontFamily:'DM Sans,sans-serif'}}>AI data center</text>
+              <text x="679" y="262" textAnchor="middle" dominantBaseline="central" style={{fontSize:10,fill:'#3B6D11',fontFamily:'DM Sans,sans-serif'}}>100 MW · 24/7 · ~$71M/yr</text>
+            </g>
+            <line x1="679" y1="162" x2="679" y2="224" stroke="#3B6D11" strokeWidth="2" markerEnd="url(#ar)"/>
+            <text x="684" y="197" style={{fontSize:9,fill:'#3B6D11',fontFamily:'DM Sans,sans-serif'}}>private line only</text>
+
+            {/* Solar arrows */}
+            <path d="M184 60 L234 60" fill="none" stroke="#EF9F27" strokeWidth="2" markerEnd="url(#ar)"/>
+            <text x="186" y="53" style={{fontSize:9,fill:'#854F0B',fontFamily:'DM Sans,sans-serif'}}>surplus → pumps</text>
+            <path d="M184 74 L546 74 L546 120" fill="none" stroke="#EF9F27" strokeWidth="2" markerEnd="url(#ar)"/>
+
+            {/* PW arrow */}
+            <path d="M184 232 L234 232" fill="none" stroke="#1D9E75" strokeWidth="1.5" strokeDasharray="4 3" markerEnd="url(#ar)"/>
+            <text x="186" y="226" style={{fontSize:9,fill:'#0F6E56',fontFamily:'DM Sans,sans-serif'}}>fills reservoir</text>
+
+            {/* Legend */}
+            <rect x="596" y="340" width="166" height="120" rx="8" fill="#F8F8F5" stroke="#E5E5E0" strokeWidth="0.5"/>
+            <text x="610" y="358" style={{fontSize:10,fontWeight:600,fill:'#444',fontFamily:'DM Sans,sans-serif'}}>Legend</text>
+            <line x1="610" y1="370" x2="635" y2="370" stroke="#EF9F27" strokeWidth="2"/>
+            <text x="642" y="374" style={{fontSize:9,fill:'#666',fontFamily:'DM Sans,sans-serif'}}>Solar / electricity</text>
+            <line x1="610" y1="388" x2="635" y2="388" stroke="#185FA5" strokeWidth="1.5"/>
+            <text x="642" y="392" style={{fontSize:9,fill:'#666',fontFamily:'DM Sans,sans-serif'}}>Water flow</text>
+            <line x1="610" y1="406" x2="635" y2="406" stroke="#3B6D11" strokeWidth="2"/>
+            <text x="642" y="410" style={{fontSize:9,fill:'#666',fontFamily:'DM Sans,sans-serif'}}>DC power (private)</text>
+            <line x1="610" y1="424" x2="635" y2="424" stroke="#9A9A90" strokeWidth="1" strokeDasharray="3 3"/>
+            <text x="642" y="428" style={{fontSize:9,fill:'#666',fontFamily:'DM Sans,sans-serif'}}>Shared water</text>
+            <text x="610" y="450" style={{fontSize:9,fill:'#888',fontStyle:'italic',fontFamily:'DM Sans,sans-serif'}}>Click any box to explore</text>
+          </svg>
+
+          {/* Quick summary cards */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,maxWidth:900,margin:'20px auto 0'}}>
+            {[
+              {label:'P1 gross revenue (2032 base)',value:'$436M/yr',color:'#0F6E56',bg:'#EAF3DE'},
+              {label:'P1 net income (2032 base)',value:'$257M/yr',color:'#0F6E56',bg:'#EAF3DE'},
+              {label:'TopCo dividend income (10%)',value:'$25.7M/yr',color:'#185FA5',bg:'#E6F1FB'},
+              {label:'Total equity proceeds (P1+P2)',value:'$378M',color:'#534AB7',bg:'#EEEDFE'},
+            ].map((c,i)=>(
+              <div key={i} style={{background:c.bg,borderRadius:10,padding:'14px',textAlign:'center'}}>
+                <div style={{fontSize:10,color:c.color,fontWeight:600,marginBottom:6,textTransform:'uppercase',letterSpacing:'0.05em'}}>{c.label}</div>
+                <div style={{fontSize:22,fontWeight:700,color:c.color}}>{c.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* REVENUE STREAMS VIEW */}
       {view==='streams' && (
