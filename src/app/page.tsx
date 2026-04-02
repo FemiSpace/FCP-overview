@@ -349,10 +349,10 @@ export default function Page() {
           {/* Quick summary cards */}
           <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,maxWidth:900,margin:'20px auto 0'}}>
             {[
-              {label:'P1 gross revenue (2032 base)',value:'$436M/yr',color:'#0F6E56',bg:'#EAF3DE'},
-              {label:'P1 net income (2032 base)',value:'$257M/yr',color:'#0F6E56',bg:'#EAF3DE'},
-              {label:'TopCo dividend income (10%)',value:'$25.7M/yr',color:'#185FA5',bg:'#E6F1FB'},
-              {label:'Total equity proceeds (P1+P2)',value:'$378M',color:'#534AB7',bg:'#EEEDFE'},
+              {label:'P1 gross revenue (2032 base)',value:'TBD',color:'#0F6E56',bg:'#EAF3DE'},
+              {label:'P1 net income (2032 base)',value:'TBD',color:'#0F6E56',bg:'#EAF3DE'},
+              {label:'TopCo dividend income (10%)',value:'TBD',color:'#185FA5',bg:'#E6F1FB'},
+              {label:'Total equity proceeds (P1+P2)',value:'TBD',color:'#534AB7',bg:'#EEEDFE'},
             ].map((c,i)=>(
               <div key={i} style={{background:c.bg,borderRadius:10,padding:'14px',textAlign:'center'}}>
                 <div style={{fontSize:10,color:c.color,fontWeight:600,marginBottom:6,textTransform:'uppercase',letterSpacing:'0.05em'}}>{c.label}</div>
